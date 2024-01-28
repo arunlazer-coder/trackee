@@ -12,11 +12,31 @@ app.use("/api/expense", expenseRouter);
 app.get("/", (req, res) => {
   res.json({ message: "hello" });
 });
+const os = require('os');
+
+// app.listen(port, () => {
+//   console.log(`
+//   -------------------------------------------------
+//   server is running on port http://localhost:${port}
+//   --------------------------------------------------
+//   `);
+// });
 
 app.listen(port, () => {
-  console.log(`
-  -------------------------------------------------
-  server is running on port http://${process.env.DB_HOST}:${port}
-  --------------------------------------------------
-  `);
+  const networkInterfaces = os.networkInterfaces();
+  const addresses = [];
+  // Iterate over network interfaces
+  Object.keys(networkInterfaces).forEach(interfaceName => {
+    networkInterfaces[interfaceName].forEach(interfaceInfo => {
+      if (interfaceInfo.family === 'IPv4' && !interfaceInfo.internal) {
+        addresses.push(interfaceInfo.address);
+      }
+    });
+  });
+
+  if (addresses.length > 0) {
+    console.log(`Server is running on http://${addresses[0]}:${port}`);
+  } else {
+    console.log('Unable to determine server address.');
+  }
 });
