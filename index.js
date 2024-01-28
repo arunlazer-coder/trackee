@@ -2,7 +2,9 @@ const { bodyParse, app, express, port } = require("./util/import"); //middleware
 const {userRoute} = require("./routes/user");
 const {categoryRouter} = require("./routes/category");
 const {expenseRouter} = require("./routes/expense");
-// app.use(cors({ origin: "http://localhost:5001/" }));
+const cors = require('cors')
+
+app.use(cors());
 app.use(express.json());
 app.use(bodyParse.urlencoded({ extended: true }));
 app.use("/api/user", userRoute);
@@ -13,14 +15,6 @@ app.get("/", (req, res) => {
   res.json({ message: "hello" });
 });
 const os = require('os');
-
-// app.listen(port, () => {
-//   console.log(`
-//   -------------------------------------------------
-//   server is running on port http://localhost:${port}
-//   --------------------------------------------------
-//   `);
-// });
 
 app.listen(port, () => {
   const networkInterfaces = os.networkInterfaces();
