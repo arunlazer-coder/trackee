@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`
   -------------------------------------------------
-  server is running on port http://localhost:${port}
+  server is running on port http://${process.env.DB_HOST}:${port}
   --------------------------------------------------
   `);
 });
