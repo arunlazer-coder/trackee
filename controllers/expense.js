@@ -35,6 +35,8 @@ const list = async (req, res) => {
   const startDate = new Date(req.query.startDate)
   const endDate = new Date(req.query.endDate)
   const type = req.query.type
+  const isExpense = req.query.isExpense
+  const category = JSON.parse(req?.query?.category) ?? null
   let resData = ''
   let where = {user_id}
   try {
@@ -45,6 +47,14 @@ const list = async (req, res) => {
     }
     if(type){
       where.type = type
+    }
+    if(isExpense){
+      where.isCredit = isExpense === "1" ? 0 : 1
+    }
+    if(category){
+      where.category_id = {
+          [Op.in]: [...category]
+      }
     }
     const response = await Expense.findAll({where})
     resData = getSuccessResponse('',response)

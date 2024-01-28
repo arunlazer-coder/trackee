@@ -19,12 +19,12 @@ const upsert = async (req, res) => {
   let resData = {}
   let msg=""
   try {
+    const otp = Math.floor(10000 + Math.random() * 90000)
     if(id){
       const response = await User.update(info, {where:{id}})
       msg="updated"
     }else{
       const response = await User.create(info)
-      const otp = Math.floor(10000 + Math.random() * 90000)
       const otpData = {
         user_id:response?.dataValues?.id,
         otp
@@ -32,7 +32,7 @@ const upsert = async (req, res) => {
       await Otp.create(otpData)
       msg="added"
     }
-    resData = getSuccessResponse(`User successfully ${msg}`)
+    resData = getSuccessResponse(`User successfully ${msg}`, otp)
   } catch (error) {
     resData = getErrorResponse("error",error)
   }
