@@ -2,6 +2,7 @@ const { bodyParse, app, express, port } = require("./util/import"); //middleware
 const {userRoute} = require("./routes/user");
 const {categoryRouter} = require("./routes/category");
 const {expenseRouter} = require("./routes/expense");
+const {accountRouter} = require("./routes/account");
 const cors = require('cors')
 
 app.use(cors());
@@ -10,6 +11,8 @@ app.use(bodyParse.urlencoded({ extended: true }));
 app.use("/api/user", userRoute);
 app.use("/api/category", categoryRouter);
 app.use("/api/expense", expenseRouter);
+app.use("/api/account", accountRouter);
+
 //testing api
 app.get("/", (req, res) => {
   res.json({ message: "hello" });

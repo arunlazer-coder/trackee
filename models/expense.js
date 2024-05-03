@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
+        account_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         isCredit:{
             type: DataTypes.BOOLEAN,
             allowNull: false

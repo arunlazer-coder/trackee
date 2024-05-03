@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 const { Op } = require('sequelize');
 
 const upsert = async (req, res) => {
-  const { amount, type, description, category_id, isCredit, transcationDate, moneyType, id } = req.body
+  const { amount, type, description, category_id, account_id, isCredit, transcationDate, moneyType, id } = req.body
   const {user_id} = res
   const validation = validationResult(req);
   let resData = {}
@@ -14,7 +14,7 @@ const upsert = async (req, res) => {
     res.send(getErrorResponse("error", validation?.errors))
     return ;
   }
-  let info = { amount, type, description, user_id, category_id, isCredit, moneyType, transcationDate };
+  let info = { amount, type, description, user_id, category_id, account_id, isCredit, moneyType, transcationDate };
   try {
     if(id){
       msg = "updated"
@@ -36,7 +36,8 @@ const list = async (req, res) => {
   const endDate = new Date(req.query.endDate)
   const type = req.query.type
   const isExpense = req.query.isExpense
-  const category = JSON.parse(req?.query?.category) ?? null
+  const category = req?.query?.category ?? null
+  const account = req?.query?.account ?? null
   let resData = ''
   let where = {user_id}
   try {
@@ -54,6 +55,11 @@ const list = async (req, res) => {
     if(category){
       where.category_id = {
           [Op.in]: [...category]
+      }
+    }
+    if(account){
+      where.account_id = {
+          [Op.in]: [...account]
       }
     }
     const response = await Expense.findAll({where})

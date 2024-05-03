@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
 
-    const Category = sequelize.define("trk_category", {
+    const Account = sequelize.define("trk_account", {
         name:{
             type: DataTypes.STRING,
             allowNull: false,
@@ -8,5 +8,5 @@ module.exports = (sequelize, DataTypes) => {
         }
     })
     
-    return Category
+    return Account
 }

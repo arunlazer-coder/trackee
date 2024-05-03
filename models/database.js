@@ -24,6 +24,7 @@ db.users = require('./user.js')(dbSetup, DataTypes)
 db.otp = require('./otp.js')(dbSetup, DataTypes)
 db.category = require('./category.js')(dbSetup, DataTypes)
 db.expense = require('./expense.js')(dbSetup, DataTypes)
+db.account = require('./account.js')(dbSetup, DataTypes)
 
 db.setup.sync({ force: false });
 
