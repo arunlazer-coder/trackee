@@ -4,7 +4,8 @@ const {getErrorResponse, getSuccessResponse} = require('../util/helper')
 
 const upsert = async (req, res) => {
   const { name,id } = req.body
-  let info = { name };
+  const {user_id} = res
+  let info = { name,user_id };
   let resData ={}
   let msg =""
   try {
@@ -24,8 +25,10 @@ const upsert = async (req, res) => {
 
 const list = async (req, res) => {
   let resData ={}
+  const {user_id} = res
+  const where = {user_id}
   try {
-    const response = await Account.findAll()
+    const response = await Account.findAll({where})
     resData = getSuccessResponse('',response)
   } catch (error) {
     resData = getErrorResponse(error.message)
@@ -35,9 +38,10 @@ const list = async (req, res) => {
 
 const destroy = async (req, res) => {
   const {ids} = req.body
+  const {user_id} = res
   let resData ={}
   try {
-    const response = await Account.destroy({ where: { id: ids }})
+    await Account.destroy({ where: { id: ids, user_id }})
     resData = getSuccessResponse('Categories Deleted Successfully')
   } catch (error) {
     resData = getErrorResponse(error.message)

@@ -42,7 +42,7 @@ const upsert = async (req, res) => {
 const list = async (req, res) => {
   try {
     const response = await User.findAll()
-    resData = getSuccessResponse(response)
+    resData = getSuccessResponse('',response)
   } catch (error) {
     resData = getErrorResponse(error.message)
   }

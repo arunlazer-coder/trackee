@@ -1,7 +1,9 @@
 const categoryController = require('../controllers/category')
 const router = require('express').Router()
-router.get('/list', categoryController.list)
-router.post('/upsert', categoryController.upsert)
-router.delete('/delete', categoryController.destroy)
+const auth = require('../middlewares/auth')
+
+router.get('/list', auth, categoryController.list)
+router.post('/upsert', auth, categoryController.upsert)
+router.delete('/delete', auth, categoryController.destroy)
 
 module.exports = {categoryRouter:router}

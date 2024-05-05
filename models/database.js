@@ -8,7 +8,7 @@ const dbSetup = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
   pool: {
     max: 5,
   },
-  logging: false, // Disable logging
+  logging: true, // Disable logging
 });
 
 dbSetup
