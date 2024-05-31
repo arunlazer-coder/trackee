@@ -1,31 +1,31 @@
-const { Sequelize, DataTypes } = require("sequelize");
-const { DB_NAME, DB_USER, DB_PASS, DB_HOST, DIALECT } = process.env;
-
+const { Sequelize } = require('sequelize')
+const { DB_NAME, DB_USER, DB_PASS, DB_HOST, DIALECT } = process.env
+const modal = require('../util/modelConfig')
+const relationShip = require('../util/relationModel')
 const dbSetup = new Sequelize(DB_NAME, DB_USER, DB_PASS, {
-  host: DB_HOST,
-  dialect:DIALECT,
-  operatorsAliases: false,
-  pool: {
-    max: 5,
-  },
-  logging: true, // Disable logging
-});
+    host: DB_HOST,
+    dialect: DIALECT,
+    operatorsAliases: false,
+    pool: {
+        max: 5,
+    },
+    logging: false, // Disable logging
+})
 
 dbSetup
-  .authenticate()
-  .then(() => console.log("connected"))
-  .catch((err) => console.log("Error: " + err));
+    .authenticate()
+    .then(() => console.log('connected'))
+    .catch((err) => console.log('Error: ' + err))
 
-const db = {};
-db.Sequelize = Sequelize;
-db.setup = dbSetup;
+const db = {}
+db.Sequelize = Sequelize
+db.setup = dbSetup
+//models will connected here
+modal(db, dbSetup)
 
-db.users = require('./user.js')(dbSetup, DataTypes)
-db.otp = require('./otp.js')(dbSetup, DataTypes)
-db.category = require('./category.js')(dbSetup, DataTypes)
-db.expense = require('./expense.js')(dbSetup, DataTypes)
-db.account = require('./account.js')(dbSetup, DataTypes)
+//foerign key mapping will done here
+relationShip(db)
 
-db.setup.sync({ force: false });
+db.setup.sync({ force: false })
 
 module.exports = db

@@ -1,20 +1,32 @@
-const getSuccessResponse = (msg='',response={}) => {
+const moment = require('moment')
+
+const getSuccessResponse = (msg = '', response = {}) => {
     return {
-        status:true,
+        status: true,
         msg,
-        response
+        response,
     }
 }
 
-const getErrorResponse = (errorMsg="", response={}) => {
+const getErrorResponse = (errorMsg = '', response = {}) => {
     return {
-        status:false,
+        status: false,
         errorMsg,
-        response
+        response,
     }
 }
 
+const MONTH_DATA = {}
+for (let i = 6; i >= -1; i--) {
+    MONTH_DATA[i] = moment().subtract(i, 'months').startOf('month').toDate()
+}
+
+const isArray = (data) => {
+    return data && Array.isArray(data) && data.length
+}
 module.exports = {
     getErrorResponse,
-    getSuccessResponse
+    getSuccessResponse,
+    isArray,
+    MONTH_DATA,
 }
