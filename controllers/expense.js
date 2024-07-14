@@ -105,12 +105,13 @@ function filterMonthlyTransactions(transactions) {
 
 const list = async (req, res) => {
     const { user_id } = res
-    const startDate = new Date(req.query.startDate)
-    const endDate = new Date(req.query.endDate)
-    const isExpense = req.query.isExpense
-    const category = req?.query?.category ?? null
-    const account = req?.query?.account ?? null
-    const isDataFormat = req?.query?.formatted ?? null
+    let {isExpense, category, account, formatted:isDataFormat, startDate, endDate} = req.query
+    
+    startDate = startDate ?  new Date(req.query.startDate) : null
+    endDate = endDate ?  new Date(req.query.endDate) : null
+    if (endDate) {
+        endDate.setHours(23, 59, 59, 999); // Set endDate to the end of the day
+    }
 
     let resData = ''
     let where = { user_id }
@@ -121,7 +122,7 @@ const list = async (req, res) => {
             }
         }
         if (isExpense) {
-            where.isCredit = isExpense === '1' ? 0 : 1
+            where.isCredit = isExpense !== '1'
         }
         if (category) {
             where.category_id = {
@@ -134,7 +135,6 @@ const list = async (req, res) => {
             }
         }
         const response = await Expense.findAll({ where })
-
         resData = getSuccessResponse('', response)
         if (isDataFormat) {
             resData = getSuccessResponse(
