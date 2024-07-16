@@ -116,7 +116,7 @@ const profile = async (req, res) => {
     try {
         const userData = await User.findOne({ where: { id: user_id } })
         if (userData) {
-            resData = getSuccessResponse(userData)
+            resData = getSuccessResponse('',userData)
         } else {
             resData = getErrorResponse('no user found')
         }
@@ -271,7 +271,7 @@ const dashboard = async (req, res) => {
             },
             { totalIncome: 0, totalExpense: 0 }
         )
-        resData = getSuccessResponse({
+        resData = getSuccessResponse('',{
             totalIncome,
             totalExpense,
             totalBalance: bankBalance,

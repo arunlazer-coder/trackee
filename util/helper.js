@@ -8,10 +8,10 @@ const getSuccessResponse = (msg = '', response = {}) => {
     }
 }
 
-const getErrorResponse = (errorMsg = '', response = {}) => {
+const getErrorResponse = (msg = '', response = {}) => {
     return {
         status: false,
-        errorMsg,
+        msg,
         response,
     }
 }
