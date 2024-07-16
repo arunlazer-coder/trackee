@@ -1,39 +1,38 @@
 module.exports = (sequelize, DataTypes) => {
-
-    const User = sequelize.define("trk_expense", {
+    const Expense = sequelize.define('trk_expense', {
         amount: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
         description: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
         },
         transcationDate: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
         },
-        moneyType:{
+        moneyType: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
         },
-        user_id:{
+        user_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
         category_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
         account_id: {
             type: DataTypes.INTEGER,
-            allowNull: false
+            allowNull: false,
         },
-        isCredit:{
+        isCredit: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: false,
         },
     })
 
-    return User
+    return Expense
 }

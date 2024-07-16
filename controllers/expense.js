@@ -1,8 +1,9 @@
+const { expense } = require('../models')
 const db = require('../models/database')
-const { expense: Expense } = db
+const { expense: Expense, account: Account, category: Category } = db
 const { getErrorResponse, getSuccessResponse } = require('../util/helper')
 const { validationResult } = require('express-validator')
-const { Op } = require('sequelize')
+const { Op, Sequelize } = require('sequelize')
 
 const upsert = async (req, res) => {
     const {
@@ -105,12 +106,19 @@ function filterMonthlyTransactions(transactions) {
 
 const list = async (req, res) => {
     const { user_id } = res
-    let {isExpense, category, account, formatted:isDataFormat, startDate, endDate} = req.query
-    
-    startDate = startDate ?  new Date(req.query.startDate) : null
-    endDate = endDate ?  new Date(req.query.endDate) : null
+    let {
+        isExpense,
+        category,
+        account,
+        formatted: isDataFormat,
+        startDate,
+        endDate,
+    } = req.query
+
+    startDate = startDate ? new Date(req.query.startDate) : null
+    endDate = endDate ? new Date(req.query.endDate) : null
     if (endDate) {
-        endDate.setHours(23, 59, 59, 999); // Set endDate to the end of the day
+        endDate.setHours(23, 59, 59, 999) // Set endDate to the end of the day
     }
 
     let resData = ''
@@ -134,7 +142,26 @@ const list = async (req, res) => {
                 [Op.in]: [...account],
             }
         }
-        const response = await Expense.findAll({ where })
+
+        const response = await Expense.findAll({
+            where,
+            include: [
+                {
+                    model: Account,
+                    attributes: [],
+                },
+                {
+                    model: Category,
+                    attributes: [],
+                },
+            ],
+            attributes:{
+                include:[
+                    [Sequelize.col(`${Account.name}.name`), 'account'],
+                    [Sequelize.col(`${Category.name}.name`), 'category']
+                ]
+            }
+        })
         resData = getSuccessResponse('', response)
         if (isDataFormat) {
             resData = getSuccessResponse(

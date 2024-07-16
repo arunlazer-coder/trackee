@@ -1,7 +1,7 @@
 const db = require('../models/database')
 const { hashSync, compareSync } = require('bcryptjs')
 const {
-    users: User,
+    user: User,
     otp: Otp,
     expense: Expense,
     account: Account,
@@ -271,13 +271,13 @@ const dashboard = async (req, res) => {
             },
             { totalIncome: 0, totalExpense: 0 }
         )
-        resData = {
+        resData = getSuccessResponse({
             totalIncome,
             totalExpense,
             totalBalance: bankBalance,
             monthlyBalance,
             latestTransaction,
-        }
+        })
     } catch (error) {
         console.log('userData', error.message)
         resData = getErrorResponse('something went wrong')

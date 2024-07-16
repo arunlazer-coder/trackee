@@ -24,9 +24,42 @@ for (let i = 6; i >= -1; i--) {
 const isArray = (data) => {
     return data && Array.isArray(data) && data.length
 }
+
+// Todo: refactor this and make it easier to leftjoin with where and selected data
+// async function fetchDataWithIncludes({model, attributes, includes}) {
+//     try {
+      
+//       const options = {
+//         include: includes,
+//         raw: true
+//       }
+//       if(attributes === 'all'){
+//         options.attributes = {
+
+//         }
+//       }
+//       const data = await model.findAll(options);
+//       return data;
+//     } catch (error) {
+//       console.error('Error fetching data:', error);
+//       throw error;
+//     }
+//   }
+  // attributes: [
+  //     'id',
+  //     [Sequelize.col(`${Account.name}.name`), 'accountName'],
+  //     [Sequelize.col(`${Category.name}.name`), 'categoryName'],
+  //     'amount',
+  //     'description',
+  //     'transcationDate',
+  //     'moneyType',
+  //     'isCredit',
+  // ],
+  
+
 module.exports = {
     getErrorResponse,
     getSuccessResponse,
     isArray,
-    MONTH_DATA,
+    MONTH_DATA
 }
