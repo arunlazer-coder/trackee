@@ -123,6 +123,7 @@ const list = async (req, res) => {
 
     let resData = ''
     let where = { user_id }
+    let order = isDataFormat ? [['transcationDate', 'ASC']] : [['id', 'DESC']]
     try {
         if (startDate && endDate) {
             where.transcationDate = {
@@ -145,6 +146,7 @@ const list = async (req, res) => {
 
         const response = await Expense.findAll({
             where,
+            order,
             include: [
                 {
                     model: Account,
@@ -180,7 +182,7 @@ const destroy = async (req, res) => {
     const user_id = res.user_id
     let resData = {}
     try {
-        const response = await Expense.destroy({ where: { id: ids, user_id } })
+        await Expense.destroy({ where: { id: ids, user_id } })
         resData = getSuccessResponse('Expenses Deleted Successfully')
     } catch (error) {
         resData = getErrorResponse(error.message)

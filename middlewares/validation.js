@@ -8,15 +8,12 @@ const notEmpty = (key) => {
 }
 
 exports.expenseVal = [
-    ...notEmpty(['amount', 'type', 'category_id', 'isCredit']),
+    ...notEmpty(['amount', 'category_id', 'account_id', 'transcationDate', 'moneyType', 'isCredit']),
 ]
 
 exports.registerVal = [
     ...notEmpty([
         { t: 'user name', p: 'user_name' },
-        'password',
-        'dob',
-        'gender',
         'password',
         'country'
     ]),
@@ -27,8 +24,7 @@ exports.registerVal = [
     check('password', 'Password must be 6 or more characters').isLength({
         min: 6,
         max: 20,
-    }),
-    check('dob', 'Invalid Date Please use YYYY-MM-DD ').isISO8601().toDate(),
+    })
 ]
 
 exports.loginVal = [

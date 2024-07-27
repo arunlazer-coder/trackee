@@ -20,7 +20,7 @@ const moment = require('moment')
 
 const upsert = async (req, res) => {
     const validation = validationResult(req)
-    const { user_name, dob, gender, password, id, country } = req.body
+    const { user_name, password, id, country } = req.body
     let hashedPass = hashSync(password ?? '', 12)
     if (validation?.errors?.length) {
         res.status(200).send(getErrorResponse('error', validation?.errors))
@@ -28,8 +28,6 @@ const upsert = async (req, res) => {
     }
     let info = {
         user_name,
-        dob,
-        gender,
         country,
         password: hashedPass,
         isActive: false,
@@ -240,10 +238,10 @@ const dashboard = async (req, res) => {
             return
         }
 
-        const lastSixMonthData = userData.filter((transaction) => {
+        const lastOneYrData = userData.filter((transaction) => {
             const transactionDate = moment(transaction.transcationDate)
-            const sixMonthsAgo = moment().subtract(6, 'months')
-            return transactionDate.isSameOrAfter(sixMonthsAgo, 'day')
+            const yearAgo = moment().subtract(12, 'months')
+            return transactionDate.isSameOrAfter(yearAgo, 'day')
         })
 
         const currentMonthData = userData.filter((transaction) => {
@@ -258,9 +256,9 @@ const dashboard = async (req, res) => {
             ) // Adjusted to include both start and end dates
         })
 
-        const bankBalance = filterBankAndCalculateAmount(lastSixMonthData)
-        const monthlyBalance = filterMonthlyTransactions(lastSixMonthData)
-        const latestTransaction = filterLatestRecord(lastSixMonthData)
+        const bankBalance = filterBankAndCalculateAmount(lastOneYrData)
+        const monthlyBalance = filterMonthlyTransactions(lastOneYrData)
+        const latestTransaction = filterLatestRecord(lastOneYrData)
 
         const { totalIncome, totalExpense } = currentMonthData.reduce(
             (totals, cur) => {
