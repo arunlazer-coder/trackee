@@ -4,7 +4,7 @@ const { expense: Expense, account: Account, category: Category } = db
 const { getErrorResponse, getSuccessResponse } = require('../util/helper')
 const { validationResult } = require('express-validator')
 const { Op, Sequelize } = require('sequelize')
-
+const moment = require('moment')
 const upsert = async (req, res) => {
     const {
         amount,
@@ -113,14 +113,15 @@ const list = async (req, res) => {
         formatted: isDataFormat,
         startDate,
         endDate,
+        month,
     } = req.query
 
-    startDate = startDate ? new Date(req.query.startDate) : null
-    endDate = endDate ? new Date(req.query.endDate) : null
-    if (endDate) {
-        endDate.setHours(23, 59, 59, 999) // Set endDate to the end of the day
+    startDate = startDate ? moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD') : null;
+    endDate = endDate ? moment(endDate, 'YYYY-MM-DD').endOf('day').format('YYYY-MM-DD') : null;
+    if (month) {
+        endDate = moment().endOf('day').format('YYYY-MM-DD');
+        startDate = moment().subtract(month, 'months').format('YYYY-MM-DD');
     }
-
     let resData = ''
     let where = { user_id }
     let order = isDataFormat ? [['transcationDate', 'ASC']] : [['id', 'DESC']]
@@ -157,12 +158,12 @@ const list = async (req, res) => {
                     attributes: [],
                 },
             ],
-            attributes:{
-                include:[
+            attributes: {
+                include: [
                     [Sequelize.col(`${Account.name}.name`), 'account'],
-                    [Sequelize.col(`${Category.name}.name`), 'category']
-                ]
-            }
+                    [Sequelize.col(`${Category.name}.name`), 'category'],
+                ],
+            },
         })
         resData = getSuccessResponse('', response)
         if (isDataFormat) {
