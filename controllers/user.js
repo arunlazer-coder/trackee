@@ -82,7 +82,7 @@ const login = async (req, res) => {
             user_id: userData.id,
         }
         token = jwt.sign(data, jwtSecretKey)
-        resData = getSuccessResponse({ userData, token })
+        resData = getSuccessResponse("",{ userData, token })
     } else {
         resData = getErrorResponse('invalid credentials')
     }

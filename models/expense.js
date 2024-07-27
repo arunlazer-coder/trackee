@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
     const Expense = sequelize.define('trk_expense', {
         amount: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         description: {
