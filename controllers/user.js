@@ -245,7 +245,17 @@ const dashboard = async (req, res) => {
         })
 
         if (!isArray(userData)) {
-            resData = getErrorResponse('No Data found')
+            const accountData = await Account.findAll({where:{user_id}})
+            resData = getErrorResponse('', {
+                totalIncome:0,
+                totalExpense:0,
+                totalBalance: accountData.map((bank) =>{return{
+                    bankName: bank.name.toUpperCase(), // Convert bank name to uppercase
+                    amount: 0,
+                }}),
+                monthlyBalance:[],
+                latestTransaction:[],
+            })
             res.send(resData)
             return
         }
