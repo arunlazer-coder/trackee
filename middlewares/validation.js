@@ -19,6 +19,7 @@ exports.registerVal = [
     ...notEmpty([
         { t: 'user name', p: 'user_name' },
         'password',
+        'name',
         'country'
     ]),
     check('user_name', 'Please include a valid email')
@@ -28,7 +29,7 @@ exports.registerVal = [
             const user = await User.findOne({where:{user_name}});
             console.log(user)
             if (user) {
-              throw new Error('Username already taken');
+              throw new Error('This email address is already in use');
             }
             return true;
           }),

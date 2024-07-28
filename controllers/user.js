@@ -20,7 +20,7 @@ const moment = require('moment')
 
 const upsert = async (req, res) => {
     const validation = validationResult(req)
-    const { user_name, password, id, country } = req.body
+    const { user_name, name, password, id, country } = req.body
     let hashedPass = hashSync(password ?? '', 12)
     if (validation?.errors?.length) {
         res.status(200).send(getErrorResponse(validation?.errors?.[0]?.msg))
@@ -28,6 +28,7 @@ const upsert = async (req, res) => {
     }
     let info = {
         user_name,
+        name,
         country,
         password: hashedPass,
         isActive: false,
@@ -72,7 +73,10 @@ const login = async (req, res) => {
         return
     }
     let token = ''
-    const userData = await User.findOne({ where: { user_name } })
+    const userData = await User.findOne({
+        where: { user_name },
+    })
+
     let doMatch = userData ? compareSync(password, userData?.password) : false
     let resData = {}
     if (doMatch) {
@@ -82,7 +86,15 @@ const login = async (req, res) => {
             user_id: userData.id,
         }
         token = jwt.sign(data, jwtSecretKey)
-        resData = getSuccessResponse("",{ userData, token })
+        resData = getSuccessResponse('', {
+            userData: {
+                id: userData.id,
+                name: userData.name,
+                user_name: userData.user_name,
+                country: userData.country,
+            },
+            token,
+        })
     } else {
         resData = getErrorResponse('invalid credentials')
     }
@@ -114,7 +126,7 @@ const profile = async (req, res) => {
     try {
         const userData = await User.findOne({ where: { id: user_id } })
         if (userData) {
-            resData = getSuccessResponse('',userData)
+            resData = getSuccessResponse('', userData)
         } else {
             resData = getErrorResponse('no user found')
         }
@@ -269,7 +281,7 @@ const dashboard = async (req, res) => {
             },
             { totalIncome: 0, totalExpense: 0 }
         )
-        resData = getSuccessResponse('',{
+        resData = getSuccessResponse('', {
             totalIncome,
             totalExpense,
             totalBalance: bankBalance,
