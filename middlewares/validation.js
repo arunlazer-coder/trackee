@@ -40,7 +40,7 @@ exports.registerVal = [
 ]
 
 exports.loginVal = [
-    //  notEmpty(['user_name', 'password']),
+    ...notEmpty(['user_name', 'password']),
     check('password', 'Password must be 6 or more characters').isLength({
         min: 6,
     }),

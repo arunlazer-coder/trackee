@@ -68,8 +68,8 @@ const list = async (req, res) => {
 const login = async (req, res) => {
     const { user_name, password } = req.body
     const errors = validationResult(req)
-    if (errors.length) {
-        res.status(200).send(errors)
+    if (errors?.errors.length) {
+        res.status(200).send(getErrorResponse(errors?.errors?.[0]?.msg))
         return
     }
     let token = ''
