@@ -23,7 +23,7 @@ const upsert = async (req, res) => {
     const { user_name, password, id, country } = req.body
     let hashedPass = hashSync(password ?? '', 12)
     if (validation?.errors?.length) {
-        res.status(200).send(getErrorResponse('error', validation?.errors))
+        res.status(200).send(getErrorResponse(validation?.errors?.[0]?.msg))
         return
     }
     let info = {

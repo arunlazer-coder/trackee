@@ -19,9 +19,6 @@ exports.registerVal = [
     ...notEmpty([
         { t: 'user name', p: 'user_name' },
         'password',
-        'dob',
-        'gender',
-        'password',
         'country'
     ]),
     check('user_name', 'Please include a valid email')
