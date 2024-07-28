@@ -236,12 +236,13 @@ const dashboard = async (req, res) => {
                     attributes: ['name'],
                 },
             ],
+            order:[['transcationDate', 'ASC']],
             where: {
                 user_id,
                 transcationDate: {
                     [Op.between]: [MONTH_DATA[6], MONTH_DATA[-1]], // Filter by createdAt within the current month
-                },
-            },
+                }
+            }
         })
 
         if (!isArray(userData)) {
