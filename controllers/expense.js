@@ -114,6 +114,8 @@ const list = async (req, res) => {
         startDate,
         endDate,
         month,
+        page = 1,
+        pageSize = 10,
     } = req.query
 
     startDate = startDate ? moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD') : null;
@@ -145,7 +147,10 @@ const list = async (req, res) => {
             }
         }
 
-        const response = await Expense.findAll({
+        const limit = parseInt(pageSize, 10)
+        const offset = (parseInt(page, 10) - 1) * limit
+
+        const response = await Expense.findAndCountAll({
             where,
             order,
             include: [
@@ -164,12 +169,29 @@ const list = async (req, res) => {
                     [Sequelize.col(`${Category.name}.name`), 'category'],
                 ],
             },
+            limit,
+            offset,
         })
-        resData = getSuccessResponse('', response)
+
+        const { count, rows } = response
+        const totalPages = Math.ceil(count / limit)
+        const currentPage = parseInt(page, 10)
+
+        resData = getSuccessResponse('', {
+            count,
+            totalPages,
+            currentPage,
+            rows,
+        })
         if (isDataFormat) {
             resData = getSuccessResponse(
                 '',
-                filterMonthlyTransactions(response)
+                {
+                    count,
+                    totalPages,
+                    currentPage,
+                    rows: filterMonthlyTransactions(rows),
+                }
             )
         }
     } catch (error) {
@@ -177,6 +199,7 @@ const list = async (req, res) => {
     }
     res.send(resData)
 }
+
 
 const destroy = async (req, res) => {
     const { ids } = req.body

@@ -92,7 +92,7 @@ const login = async (req, res) => {
                 name: userData.name,
                 user_name: userData.user_name,
                 country: userData.country,
-                isActive: userData.isActive
+                isActive: userData.isActive,
             },
             token,
         })
@@ -237,27 +237,35 @@ const dashboard = async (req, res) => {
                     attributes: ['name'],
                 },
             ],
-            order:[['transcationDate', 'ASC']],
+            order: [['transcationDate', 'ASC']],
             where: {
                 user_id,
                 transcationDate: {
                     [Op.between]: [MONTH_DATA[6], MONTH_DATA[-1]], // Filter by createdAt within the current month
-                }
-            }
+                },
+            },
         })
 
         if (!isArray(userData)) {
-            const accountData = await Account.findAll({where:{user_id}})
-            resData = getErrorResponse('', {
-                totalIncome:0,
-                totalExpense:0,
-                totalBalance: accountData.map((bank) =>{return{
-                    bankName: bank.name.toUpperCase(), // Convert bank name to uppercase
-                    amount: 0,
-                }}),
-                monthlyBalance:{},
-                latestTransaction:[],
-            })
+            let outputData = {
+                totalIncome: 0,
+                totalExpense: 0,
+                totalBalance: [],
+                monthlyBalance: {},
+                latestTransaction: [],
+            }
+            const accountData = await Account.findAll({ where: { user_id } })
+            if (!isArray(accountData)) {
+                resData = getErrorResponse('No data found', outputData)
+            } else {
+                outputData.totalBalance = accountData.map((bank) => {
+                    return {
+                        bankName: bank.name.toUpperCase(), // Convert bank name to uppercase
+                        amount: 0,
+                    }
+                })
+                resData = getSuccessResponse('', outputData)
+            }
             res.send(resData)
             return
         }
