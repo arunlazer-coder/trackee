@@ -92,6 +92,7 @@ const login = async (req, res) => {
                 name: userData.name,
                 user_name: userData.user_name,
                 country: userData.country,
+                isActive: userData.isActive
             },
             token,
         })
@@ -254,7 +255,7 @@ const dashboard = async (req, res) => {
                     bankName: bank.name.toUpperCase(), // Convert bank name to uppercase
                     amount: 0,
                 }}),
-                monthlyBalance:[],
+                monthlyBalance:{},
                 latestTransaction:[],
             })
             res.send(resData)
