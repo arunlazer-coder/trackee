@@ -121,12 +121,12 @@ const list = async (req, res) => {
     startDate = startDate ? moment(startDate, 'YYYY-MM-DD').format('YYYY-MM-DD') : null;
     endDate = endDate ? moment(endDate, 'YYYY-MM-DD').endOf('day').format('YYYY-MM-DD') : null;
     if (month) {
-        endDate = moment().endOf('day').format('YYYY-MM-DD');
-        startDate = moment().subtract(month, 'months').format('YYYY-MM-DD');
+        startDate = moment().subtract(month - 1, 'months').startOf('month').format('YYYY-MM-DD');
+        endDate = moment().subtract(month - 1, 'months').endOf('month').format('YYYY-MM-DD');
     }
     let resData = ''
     let where = { user_id }
-    let order = isDataFormat ? [['transcationDate', 'ASC']] : [['id', 'DESC']]
+    let order = isDataFormat ? [['transcationDate', 'ASC']] : [['transcationDate', 'DESC']]
     try {
         if (startDate && endDate) {
             where.transcationDate = {
