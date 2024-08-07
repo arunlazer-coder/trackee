@@ -122,7 +122,7 @@ const list = async (req, res) => {
     endDate = endDate ? moment(endDate, 'YYYY-MM-DD').endOf('day').format('YYYY-MM-DD') : null;
     if (month) {
         startDate = moment().subtract(month - 1, 'months').startOf('month').format('YYYY-MM-DD');
-        endDate = moment().subtract(month - 1, 'months').endOf('month').format('YYYY-MM-DD');
+        endDate = moment().endOf('month').format('YYYY-MM-DD');
     }
     let resData = ''
     let where = { user_id }
