@@ -55,7 +55,7 @@ const upsert = async (req, res) => {
             }
             msg = 'added'
         }
-        resData = getSuccessResponse(`User successfully ${msg}`, otp)
+        resData = getSuccessResponse(`OTP sent successfully`)
     } catch (error) {
         console.log(error.message)
         resData = getErrorResponse('error', error)
@@ -93,7 +93,7 @@ const login = async (req, res) => {
             time: Date(),
             user_id: userData.id,
         }
-        token = jwt.sign(data, jwtSecretKey, '6m')
+        token = jwt.sign(data, jwtSecretKey, { expiresIn: '6m' })
         resData = getSuccessResponse('', {
             userData: {
                 id: userData.id,
@@ -152,8 +152,12 @@ function filterMonthlyTransactions(transactions) {
     }
 
     // Initialize objects to store income and expense for each month
-    const monthlyIncome = {}
-    const monthlyExpense = {}
+    let monthlyIncome = {}
+    let monthlyExpense = {}
+    let months = Array.from({ length: 12 }, (e, i) => 
+        new Date(0, i).toLocaleString('en', { month: 'long' })
+      );
+    months.forEach((x) => { {monthlyIncome[x] = 0; monthlyExpense[x] = 0} })
 
     transactions.forEach((transaction) => {
         const transactionDate = new Date(transaction.transcationDate)
@@ -228,7 +232,7 @@ const filterLatestRecord = (transactions) => {
 }
 
 const stack = async (req, res) => {
-    const {year} = req.query    
+    const {year, account_id, category_id} = req.query    
     const {user_id} = res
     try {   
         const userData = await Expense.findAll({
@@ -238,11 +242,13 @@ const stack = async (req, res) => {
                     model: Account,
                     as: 'trk_user_account',
                     attributes: ['name'],
+                    ...(account_id ? { where: { id:account_id } } : {})
                 },
                 {
                     model: Category, // will create a left join
                     as: 'trk_user_category', // Alias for the association
                     attributes: ['name'],
+                    ...(category_id ? { where: { id:category_id } } : {})
                 },
             ],
             order: [['transcationDate', 'ASC']],
@@ -254,35 +260,10 @@ const stack = async (req, res) => {
                         moment.utc(`${year}-12-31`).endOf('day').toDate(),   
                     ],
                 },
+
             },
         });
-        let opData = filterMonthlyTransactions(userData)
-        if(!isArray(userData)) {
-            const months = Array.from({ length: 12 }, (e, i) => 
-                new Date(0, i).toLocaleString('en', { month: 'long' })
-              );
-            emptyList = months.map(x => {
-                return {
-                    month:x,
-                    amount:0
-                }
-            })
-            opData =  {
-                monthlyIncome: months.map(x => {
-                    return {
-                        month:x,
-                        income:0
-                    }
-                }),
-                monthlyExpense: months.map(x => {
-                    return {
-                        month:x,
-                        expense:0
-                    }
-                }),
-            }
-        }
-        res.send(getSuccessResponse('', opData))
+        res.send(getSuccessResponse('', filterMonthlyTransactions(userData)))
     } catch (error) {
         console.log('error', error.message)
         res.send(getErrorResponse(error.message))
