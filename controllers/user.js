@@ -17,6 +17,7 @@ const jwt = require('jsonwebtoken')
 const { validationResult } = require('express-validator')
 const { Op } = require('sequelize')
 const moment = require('moment')
+const sendOtp = require('../util/sendOtp')
 
 const upsert = async (req, res) => {
     const validation = validationResult(req)
@@ -46,10 +47,17 @@ const upsert = async (req, res) => {
                 otp,
             }
             await Otp.create(otpData)
+            const success = await sendOtp({to:user_name, name}, otp);
+            if (success) {
+                console.log('OTP sent successfully');
+            } else {
+                console.log('Failed to send OTP');
+            }
             msg = 'added'
         }
         resData = getSuccessResponse(`User successfully ${msg}`, otp)
     } catch (error) {
+        console.log(error.message)
         resData = getErrorResponse('error', error)
     }
     res.send(resData)
@@ -222,7 +230,6 @@ const filterLatestRecord = (transactions) => {
 const stack = async (req, res) => {
     const {year} = req.query    
     const {user_id} = res
-    console.log(moment({ year }).utc().startOf('year').toDate())
     try {   
         const userData = await Expense.findAll({
             attributes: ['amount', 'transcationDate', 'isCredit'],
