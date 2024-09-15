@@ -8,6 +8,7 @@ router.get('/profile', auth,userController.profile)
 router.get('/dashboard', auth,userController.dashboard)
 router.post('/login',loginVal, userController.login)
 router.post('/otpVerify',auth, userController.otpVerify)
+router.get('/stack',auth, userController.stack)
 
 module.exports = {
     userRoute:router

@@ -85,7 +85,7 @@ const login = async (req, res) => {
             time: Date(),
             user_id: userData.id,
         }
-        token = jwt.sign(data, jwtSecretKey)
+        token = jwt.sign(data, jwtSecretKey, '6m')
         resData = getSuccessResponse('', {
             userData: {
                 id: userData.id,
@@ -219,6 +219,70 @@ const filterLatestRecord = (transactions) => {
     )
 }
 
+const stack = async (req, res) => {
+    const {year} = req.query    
+    const {user_id} = res
+    console.log(moment({ year }).utc().startOf('year').toDate())
+    try {   
+        const userData = await Expense.findAll({
+            attributes: ['amount', 'transcationDate', 'isCredit'],
+            include: [
+                {
+                    model: Account,
+                    as: 'trk_user_account',
+                    attributes: ['name'],
+                },
+                {
+                    model: Category, // will create a left join
+                    as: 'trk_user_category', // Alias for the association
+                    attributes: ['name'],
+                },
+            ],
+            order: [['transcationDate', 'ASC']],
+            where: {
+                user_id,
+                transcationDate: {
+                    [Op.between]: [
+                        moment.utc(`${year}-01-01`).startOf('day').toDate(),
+                        moment.utc(`${year}-12-31`).endOf('day').toDate(),   
+                    ],
+                },
+            },
+        });
+        let opData = filterMonthlyTransactions(userData)
+        if(!isArray(userData)) {
+            const months = Array.from({ length: 12 }, (e, i) => 
+                new Date(0, i).toLocaleString('en', { month: 'long' })
+              );
+            emptyList = months.map(x => {
+                return {
+                    month:x,
+                    amount:0
+                }
+            })
+            opData =  {
+                monthlyIncome: months.map(x => {
+                    return {
+                        month:x,
+                        income:0
+                    }
+                }),
+                monthlyExpense: months.map(x => {
+                    return {
+                        month:x,
+                        expense:0
+                    }
+                }),
+            }
+        }
+        res.send(getSuccessResponse('', opData))
+    } catch (error) {
+        console.log('error', error.message)
+        res.send(getErrorResponse(error.message))
+    }
+   
+}
+
 const dashboard = async (req, res) => {
     const { user_id } = res
     let resData = {}
@@ -251,7 +315,10 @@ const dashboard = async (req, res) => {
                 totalIncome: 0,
                 totalExpense: 0,
                 totalBalance: [],
-                monthlyBalance: {},
+                monthlyBalance: {
+                    monthlyIncome: [],
+                    monthlyExpense: [],
+                },
                 latestTransaction: [],
             }
             const accountData = await Account.findAll({ where: { user_id } })
@@ -322,4 +389,5 @@ module.exports = {
     otpVerify,
     profile,
     dashboard,
+    stack
 }
