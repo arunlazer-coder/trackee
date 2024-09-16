@@ -36,6 +36,7 @@ const upsert = async (req, res) => {
     }
     let resData = {}
     let msg = ''
+    let token;
     try {
         const otp = Math.floor(10000 + Math.random() * 90000)
         if (id) {
@@ -54,8 +55,9 @@ const upsert = async (req, res) => {
                 console.log('Failed to send OTP');
             }
             msg = 'added'
+           token = jwt.sign({  time: Date(),  user_id: response?.dataValues?.id, }, process.env.JWT_SECRET_KEY, { expiresIn: '2d' })
         }
-        resData = getSuccessResponse(`OTP sent successfully`)
+        resData = getSuccessResponse(`OTP sent successfully`, {token})
     } catch (error) {
         console.log(error.message)
         resData = getErrorResponse('error', error)
