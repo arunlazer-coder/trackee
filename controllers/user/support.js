@@ -1,3 +1,4 @@
+const db = require('../../models/database')
 const { otp: Otp } = db
 const sendOtp = require('../../util/sendOtp')
 const filterMonthlyTransactions = (transactions) => {
