@@ -12,9 +12,18 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send OTP
-const sendOtp = async ({to, name}, otp) => {
+const sendOtp = async ({to, name}, otp, template=REGISTER) => {
+
+    const templateDir = {
+        REGISTER:{path:'../mailTemplate/otp.html', subject:'Your OTP for Trackkee'},
+        FORGOT:{path:'../mailTemplate/forgot.html', subject:'Your OTP for Trackkee'}
+    }
+    if(!templateDir[template]){
+        console.error('Invalid template');
+        return false;
+    }
     try {
-        const templatePath = path.join(__dirname, '../mailTemplate/otp.html');
+        const templatePath = path.join(__dirname, templateDir[template].path);
         let htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
         // Replace {{otp}} with actual OTP value
@@ -24,7 +33,7 @@ const sendOtp = async ({to, name}, otp) => {
         const info = await transporter.sendMail({
             from: 'infoatz.info@gmail.com', // sender address
             to, // receiver address
-            subject: 'Your OTP for Trackkee', // Subject line
+            subject: templateDir[template].subject, // Subject line
             html: htmlTemplate,
             attachments: [
                 {

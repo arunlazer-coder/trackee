@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
 
     const Otp = sequelize.define("trk_otp", {
         otp:{
-            type: DataTypes.SMALLINT,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         user_id:{
