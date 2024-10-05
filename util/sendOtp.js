@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send OTP
-const sendOtp = async ({to, name}, otp, template=REGISTER) => {
+const sendOtp = async ({to, name}, otp, template="REGISTER") => {
 
     const templateDir = {
         REGISTER:{path:'../mailTemplate/otp.html', subject:'Your OTP for Trackkee'},

@@ -1,6 +1,8 @@
 const db = require('../../models/database')
 const { otp: Otp } = db
 const sendOtp = require('../../util/sendOtp')
+const jwt = require('jsonwebtoken')
+
 const filterMonthlyTransactions = (transactions) => {
     const monthlyTransactions = {
         monthlyIncome: [],

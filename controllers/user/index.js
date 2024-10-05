@@ -31,7 +31,7 @@ const upsert = async (req, res) => {
     let token;
     try {
         const response = await User.create(info)
-        generateOtpFlow({user_name, name, response})
+        token = await generateOtpFlow({user_name, name, response})
         resData = getSuccessResponse(`OTP sent successfully`, {token})
     } catch (error) {
         console.log(error.message)
