@@ -60,7 +60,7 @@ const login = async (req, res) => {
             time: Date(),
             user_id: userData.id,
         }
-        token = jwt.sign(data, jwtSecretKey, { expiresIn: '6m' })
+        token = jwt.sign(data, jwtSecretKey, { expiresIn: '365d' })
         resData = getSuccessResponse('', {
             userData: {
                 id: userData.id,
